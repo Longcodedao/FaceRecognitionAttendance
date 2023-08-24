@@ -5,3 +5,4 @@ tkinter
 Pillow
 requests
 python-firebase
+firebase_admin
