@@ -1,0 +1,51 @@
+{% extends 'base.html'%}
+
+{% block head %}
+<title>Webcam Capture</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+
+{% block body %}
+<h1>Webcam Capture</h1>
+<video id="video" autoplay></video>
+<input type="text" id="name">
+<button id="capture">Send</button>
+<script>
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            var video = document.getElementById('video');
+            video.srcObject = stream;
+        })
+        .catch(function(error) {
+            console.log("Error accessing webcam: " + error);
+        });
+
+    var captureButton = document.getElementById('capture');
+    captureButton.addEventListener('click', function() {
+
+    var video = document.getElementById('video');
+    var canvas = document.createElement('canvas');
+    var name = document.getElementById('name').value;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+    var dataURL = canvas.toDataURL('image/png');
+        
+    fetch('/upload_capture_img', {
+        method: 'POST',
+        body: JSON.stringify({ image: dataURL, name: name}),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .then(() => window.location.href = '/')
+    .catch(error => console.log('Error uploading image: ' + error));
+    });
+</script>
+{% endblock %}

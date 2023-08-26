@@ -1,8 +1,0 @@
-face_recognition
-opencv-python
-numpy
-tkinter
-Pillow
-requests
-python-firebase
-firebase_admin

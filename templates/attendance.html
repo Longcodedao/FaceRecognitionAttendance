@@ -1,0 +1,36 @@
+{% extends 'base.html'%}
+
+{% block head %}
+<title>Webcam Streaming</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+{% endblock %}
+
+{% block body %}
+<h1>Webcam Streaming</h1>
+<video id="video" autoplay></video>
+<script>
+    const video = document.getElementById('video');
+
+    async function startStream() {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+
+        const socket = io.connect('http://127.0.0.1:5000');
+
+        video.addEventListener('play', () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            setInterval(() => {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/jpeg');
+                socket.emit('image_data', { data: imageData });
+            }, 200); // Adjust the interval as needed
+        });
+    }
+
+    startStream();
+</script>
+{% endblock %}
