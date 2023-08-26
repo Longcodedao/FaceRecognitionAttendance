@@ -1,5 +1,39 @@
+// navigator.mediaDevices
+//   .getUserMedia({ video: true })
+//   .then(function (stream) {
+//     var video = document.getElementById('video');
+//     video.srcObject = stream;
+//   })
+//   .catch(function (error) {
+//     console.log('Error accessing webcam: ' + error);
+//   });
+
+// var captureButton = document.getElementById('capture');
+// captureButton.addEventListener('click', function () {
+//   var video = document.getElementById('video');
+//   var canvas = document.createElement('canvas');
+//   canvas.width = video.videoWidth;
+//   canvas.height = video.videoHeight;
+//   var ctx = canvas.getContext('2d');
+//   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+//   var dataURL = canvas.toDataURL('image/png');
+
+//   fetch('/upload_capture_img', {
+//     method: 'POST',
+//     body: JSON.stringify({ image: dataURL }),
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   })
+//     .then((response) => response.text())
+//     .then((result) => console.log(result))
+//     .then(() => (window.location.href = '/'))
+//     .catch((error) => console.log('Error uploading image: ' + error));
+// });
+
 // Capturing the image
-let imageURL = '';
+let imageURL = document.getElementById('downloadLocation').value;
 
 const openOverlayButton = document.getElementById('openOverlayBtn');
 const closeOverlayButton = document.getElementById('closeOverlayBtn');
@@ -10,6 +44,7 @@ const downloadButton = document.getElementById('downloadBtn');
 const downloadLink = document.getElementById('downloadLink');
 // const imageDataInput = document.getElementById('imageData');
 const downloadLocation = document.getElementById('downloadLocation');
+const firstName = document.getElementById('first-name');
 
 async function startWebcam() {
   try {
@@ -47,17 +82,18 @@ openOverlayButton.addEventListener('click', openImageOverlay);
 closeOverlayButton.addEventListener('click', closeImageOverlay);
 captureButton.addEventListener('click', captureImage);
 
-//  Submit event
+//  Form validation Field
 const addStudentForm = document.getElementById('addStudentForm');
 
 addStudentForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  let firstName = document.getElementById('first-name').value;
-  let lastName = document.getElementById('last-name').value;
-  let email = document.getElementById('email').value;
-  let studentID = document.getElementById('student-id').value;
-  let classStudy = document.getElementById('class').value;
+  console.log('Hello World');
+  const firstName = document.getElementById('first-name').value;
+  const lastName = document.getElementById('last-name').value;
+  const email = document.getElementById('email').value;
+  const studentID = document.getElementById('student-id').value;
+  const classStudy = document.getElementById('class').value;
 
   if (!checkValidate()) {
     // console.log('Wrong');
@@ -74,7 +110,7 @@ addStudentForm.addEventListener('submit', async (event) => {
   };
 
   try {
-    const response = await fetch('/addNewStudent', {
+    const response = await fetch(`/editStudent/${studentID}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,7 +119,7 @@ addStudentForm.addEventListener('submit', async (event) => {
     });
 
     if (response.ok) {
-      alert('Student added successfully!');
+      alert('Student edited successfully!');
       // Clear form fields after successful submission
       addStudentForm.reset();
       window.location.href = '/tableNew';
@@ -103,48 +139,36 @@ addStudentForm.addEventListener('submit', async (event) => {
       isValid = false;
       document.getElementById('first-name-warning').textContent =
         'Please enter First Name';
-    } else {
-      document.getElementById('first-name-warning').textContent = '';
     }
 
     if (!lastName.trim()) {
       isValid = false;
       document.getElementById('last-name-warning').textContent =
         'Please enter Last Name';
-    } else {
-      document.getElementById('last-name-warning').textContent = '';
     }
 
     if (!email.trim()) {
       isValid = false;
       document.getElementById('email-warning').textContent =
         'Please enter your email';
-    } else {
-      document.getElementById('email-warning').textContent = '';
     }
 
     if (!studentID.trim()) {
       isValid = false;
       document.getElementById('studentid-warning').textContent =
         'Please enter your student ID';
-    } else {
-      document.getElementById('studentid-warning').textContent = '';
     }
 
     if (!classStudy.trim()) {
       isValid = false;
       document.getElementById('class-warning').textContent =
         'Please enter your class';
-    } else {
-      document.getElementById('class-warning').textContent = '';
     }
 
     if (!imageURL) {
       isValid = false;
       document.getElementById('image-warning').textContent =
         'Please insert an image';
-    } else {
-      document.getElementById('image-warning').textContent = '';
     }
 
     return isValid;

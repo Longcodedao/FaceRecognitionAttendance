@@ -1,0 +1,90 @@
+{% extends 'base_another.html' %}
+
+{% block head %}
+<title>Edit New Student</title>
+{% endblock %}
+
+{% block cssImport %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/add_student.css') }}">
+{% endblock %}
+
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border border-warning mb-4">
+                <div class="card-header">
+                    <h4>Edit New Student</h4>
+                </div>
+                
+                <div class="card-body">
+                    <form action="" id="addStudentForm">
+                        <div class="mb-3">
+                            <label for="first-name" class="form-label">First Name</label>
+                            <p id="first-name-warning" class="text-danger warning"></p>
+                            <input type="text" class="form-control" id="first-name" 
+                                    placeholder="Enter your first name" value="{{ student.first_name }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="last-name" class="form-label">Last Name</label>
+                            <p id="last-name-warning" class="text-danger warning"></p>
+                            <input type="text" class="form-control" id="last-name" 
+                                    placeholder="Enter your last name" value="{{ student.last_name }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <p id="email-warning" class="text-danger warning"></p>
+                            <input type="email" class="form-control" id="email" 
+                                    placeholder="name@example.com" value="{{ student.email }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="student-id" class="form-label">StudentID</label>
+                            <p id="studentid-warning" class="text-danger warning"></p>
+                            <input type="text" class="form-control" id="student-id" 
+                                    placeholder="Student ID" readonly value="{{ student.student_id }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="class" class="form-label">Class</label>
+                            <p id="class-warning" class="text-danger warning"></p>
+                            <input type="text" class="form-control" id="class" 
+                                    placeholder="Enter the class" value="{{ student.class }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Capture Image</label>
+                            <!-- <input type="hidden" id="imageData" name="imageData"> -->
+                            <p id="image-warning" class="text-danger warning"></p>
+                            <input type="text" class="form-control" 
+                                    id="downloadLocation" readonly value="{{ student.image_path }}">
+                            <button id="openOverlayBtn" type="button" class="btn btn-primary ml-2 mt-3">Open Image Capture</button>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="overlay" id="imageOverlay">
+  <div class="overlay-content">
+    <button type="button" class="close-btn btn btn-danger" id="closeOverlayBtn">Close</button>
+    <video id="webcam" autoplay></video>
+
+    <br>
+    <button id="captureBtn" type="button" class="btn btn-primary mt-2">Capture Image</button>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{{ url_for('static', filename='/js/edit_student.js') }}"></script>
+{% endblock %}
