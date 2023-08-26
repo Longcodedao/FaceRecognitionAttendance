@@ -19,35 +19,41 @@
                 </div>
                 
                 <div class="card-body">
-                    <form action="" id="addStudentFrom">
+                    <form action="" id="addStudentForm">
                         <div class="mb-3">
                             <label for="first-name" class="form-label">First Name</label>
+                            <p id="first-name-warning" class="text-danger warning"></p>
                             <input type="text" class="form-control" id="first-name" placeholder="Enter your first name">
                         </div>
 
                         <div class="mb-3">
                             <label for="last-name" class="form-label">Last Name</label>
+                            <p id="last-name-warning" class="text-danger warning"></p>
                             <input type="text" class="form-control" id="last-name" placeholder="Enter your last name">
                         </div>
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email address</label>
+                            <p id="email-warning" class="text-danger warning"></p>
                             <input type="email" class="form-control" id="email" placeholder="name@example.com">
                         </div>
 
                         <div class="mb-3">
                             <label for="student-id" class="form-label">StudentID</label>
+                            <p id="studentid-warning" class="text-danger warning"></p>
                             <input type="text" class="form-control" id="student-id" placeholder="Student ID">
                         </div>
 
                         <div class="mb-3">
                             <label for="class" class="form-label">Class</label>
+                            <p id="class-warning" class="text-danger warning"></p>
                             <input type="text" class="form-control" id="class" placeholder="Enter the class">
                         </div>
 
                         <div class="mb-3">
                             <label for="image" class="form-label">Capture Image</label>
                             <!-- <input type="hidden" id="imageData" name="imageData"> -->
+                            <p id="image-warning" class="text-danger warning"></p>
                             <input type="text" class="form-control" id="downloadLocation" readonly>
                             <button id="openOverlayBtn" type="button" class="btn btn-primary ml-2 mt-3">Open Image Capture</button>
                         </div>
@@ -65,8 +71,9 @@
   <div class="overlay-content">
     <button type="button" class="close-btn btn btn-danger" id="closeOverlayBtn">Close</button>
     <video id="webcam" autoplay></video>
+
+    <br>
     <button id="captureBtn" type="button" class="btn btn-primary mt-2">Capture Image</button>
-    <button id="downloadBtn" type="button" class="btn btn-success mt-2">Download Image</button>
   </div>
 </div>
 {% endblock %}

@@ -64,10 +64,10 @@ function captureImage() {
     .drawImage(webcamElement, 0, 0, canvas.width, canvas.height);
   imageURL = canvas.toDataURL('image/png'); // You can also use 'image/png'
   downloadLocation.value = imageURL;
+  closeImageOverlay();
 }
 
 // function
-
 function openImageOverlay() {
   imageOverlay.style.display = 'flex';
   startWebcam();
@@ -78,34 +78,123 @@ function closeImageOverlay() {
   webcamElement.srcObject.getTracks().forEach((track) => track.stop());
 }
 
-async function uploadImage() {
-  try {
-    console.log(firstName.value);
-    const response = await fetch('/upload_capture_img', {
-      method: 'POST',
-      body: JSON.stringify({ image: imageURL, name: firstName.value }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+// async function uploadImage() {
+//   try {
+//     console.log(firstName.value);
+//     const response = await fetch('/upload_capture_img', {
+//       method: 'POST',
+//       body: JSON.stringify({ image: imageURL, name: firstName.value }),
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
 
-    if (response.ok) {
-      const result = await response.text();
-      console.log(result);
-      // Redirect to the desired location after successful upload
-      window.location.href = '/';
-    } else {
-      console.log('Image upload failed with status:', response.status);
-    }
-  } catch (error) {
-    console.log('Error uploading image:', error);
-  }
-}
-
+//     if (response.ok) {
+//       const result = await response.text();
+//       console.log(result);
+//       // Redirect to the desired location after successful upload
+//       window.location.href = '/';
+//     } else {
+//       console.log('Image upload failed with status:', response.status);
+//     }
+//   } catch (error) {
+//     console.log('Error uploading image:', error);
+//   }
+// }
 openOverlayButton.addEventListener('click', openImageOverlay);
 closeOverlayButton.addEventListener('click', closeImageOverlay);
 captureButton.addEventListener('click', captureImage);
-downloadButton.addEventListener('click', uploadImage);
+// downloadButton.addEventListener('click', uploadImage);
 
-// // Form validation Field
-// const addStudentForm 
+//  Form validation Field
+const addStudentForm = document.getElementById('addStudentForm');
+
+addStudentForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  console.log('Hello World');
+  const firstName = document.getElementById('first-name').value;
+  const lastName = document.getElementById('last-name').value;
+  const email = document.getElementById('email').value;
+  const studentID = document.getElementById('student-id').value;
+  const classStudy = document.getElementById('class').value;
+
+  if (!checkValidate()) {
+    // console.log('Wrong');
+    return;
+  }
+
+  const formData = {
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    student_id: studentID,
+    class_study: classStudy,
+    image: imageURL,
+  };
+
+  try {
+    const response = await fetch('/addNewStudent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      alert('Student added successfully!');
+      // Clear form fields after successful submission
+      addStudentForm.reset();
+      window.location.href = '/tableNew';
+    } else {
+      console.error('Add student request failed with status:', response.status);
+      alert('Failed to add student.');
+    }
+  } catch (error) {
+    console.error('Error adding student:', error);
+    alert('An error occurred while adding student.');
+  }
+
+  function checkValidate() {
+    let isValid = true;
+
+    if (!firstName.trim()) {
+      isValid = false;
+      document.getElementById('first-name-warning').textContent =
+        'Please enter First Name';
+    }
+
+    if (!lastName.trim()) {
+      isValid = false;
+      document.getElementById('last-name-warning').textContent =
+        'Please enter Last Name';
+    }
+
+    if (!email.trim()) {
+      isValid = false;
+      document.getElementById('email-warning').textContent =
+        'Please enter your email';
+    }
+
+    if (!studentID.trim()) {
+      isValid = false;
+      document.getElementById('studentid-warning').textContent =
+        'Please enter your student ID';
+    }
+
+    if (!classStudy.trim()) {
+      isValid = false;
+      document.getElementById('class-warning').textContent =
+        'Please enter your class';
+    }
+
+    if (!imageURL) {
+      isValid = false;
+      document.getElementById('image-warning').textContent =
+        'Please insert an image';
+    }
+
+    return isValid;
+  }
+});

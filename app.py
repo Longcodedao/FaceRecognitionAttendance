@@ -5,6 +5,7 @@ import base64
 import os
 import numpy as np
 import cv2
+import useDB
 
 
 app = Flask(__name__)
@@ -26,6 +27,38 @@ def tableNew():
 @app.route('/addNewStudent')
 def addNewStudent():
     return render_template('addNewStudent.html')
+
+
+@app.route('/addNewStudent', methods = ['POST'])
+def addnewStudent():
+    try: 
+        data = request.json
+        new_student = {
+            "first_name": data['first_name'],
+            "last_name": data['last_name'],
+            "email": data['email'],
+            "student_id": data['student_id'],
+            "class": data['class_study'],
+        }
+
+        results = useDB.students_collection.insert_one(new_student)
+        name = data['first_name']
+
+        image =  data['image']
+        image_json = image.split(",")[1]
+        decoded_image_data = base64.b64decode(image_json)
+        # Save the image
+        if not os.path.exists(f"data/{name}"):
+            os.makedirs(f"data/images/{name}")
+        open(f"data/images/{name}/{name}.png", "wb").write(decoded_image_data)
+
+        return jsonify({'message': 'success'}, 200)
+
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500 
+
+
 ########################################################
 
 @app.route('/capture_img')
@@ -50,6 +83,7 @@ def upload_capture_img():
         return jsonify({'message': 'success'}, 200)
     else:
         return jsonify({'message': 'method not allowed'}, 405)
+
 
 @app.route('/api/studens', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_students():
