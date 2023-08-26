@@ -24,21 +24,23 @@
                   </tr>
                 </thead>
                 <tbody>
+
+                  {% for student in student_data %}
                   <tr>
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div>
-                          <img src="{{ url_for('static', filename='img/team-2.jpg') }}" class="avatar avatar-sm me-3" alt="user1">
+                          <img src="{{ url_for('serve_data_image', image_filename=student.image_path) }}" class="avatar avatar-sm me-3" alt="user1">
                         </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm">John Michael</h6>
-                          <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
+                          <h6 class="mb-0 text-sm">{{ student.last_name }} {{ student.first_name }}</h6>
+                          <p class="text-xs text-secondary mb-0">{{ student.email }}</p>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">ClassABC</p>
-                      <p class="text-xs text-secondary mb-0">342123</p>
+                      <p class="text-xs font-weight-bold mb-0">{{ student.class }}</p>
+                      <p class="text-xs text-secondary mb-0">{{ student.student_id }}</p>
                     </td>
                     
                     <td class="align-middle">
@@ -53,8 +55,9 @@
                       </a>
                     </td>
                   </tr>
+                  {% endfor %}
 
-                  <tr>
+                  <!-- <tr>
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div>
@@ -201,7 +204,7 @@
                         </a>
                     </td>
 
-                  </tr>
+                  </tr> -->
                 </tbody>
               </table>
             </div>
