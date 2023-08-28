@@ -1,75 +1,103 @@
-{% extends 'base_another.html' %}
-
-{% block head %}
+{% extends 'base_another.html' %} {% block head %}
 <title>Table</title>
-{% endblock %}
-
-
-{% block body %}
+{% endblock %} {% block body %}
 <div class="container-fluid py-4">
-    <div class="row">
-      <div class="col-12">
-        <div class="card mb-4">
-          <div class="card-header pb-0">
-            <h6>Students table</h6>
-          </div>
-          <div class="card-body px-0 pt-0 pb-2">
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
-                <thead>
-                  <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Students</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Student ID</th>
-                    <th class="text-secondary opacity-7"></th>
-                  </tr>
-                </thead>
-                <tbody>
-
-                  {% for student in student_data %}
-                  <tr>
-                    <td>
-                      <div class="d-flex px-2 py-1">
-                        <div>
-                          <img src="{{ url_for('serve_data_image', image_filename=student.image_path) }}" class="avatar avatar-sm me-3" alt="user1">
-                        </div>
-                        <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm">{{ student.last_name }} {{ student.first_name }}</h6>
-                          <p class="text-xs text-secondary mb-0">{{ student.email }}</p>
-                        </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-header pb-0">
+          <h6>Students table</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th
+                    class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+                  >
+                    Students
+                  </th>
+                  <th
+                    class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+                  >
+                    Student ID
+                  </th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in student_data %}
+                <tr>
+                  <td>
+                    <div class="d-flex px-2 py-1">
+                      <div>
+                        <img
+                          src="{{ url_for('serve_data_image', image_filename=student.image_path) }}"
+                          class="avatar avatar-sm me-3"
+                          alt="user1"
+                        />
                       </div>
-                    </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ student.class }}</p>
-                      <p class="text-xs text-secondary mb-0">{{ student.student_id }}</p>
-                    </td>
-                    
-                    <td class="align-middle">
-                      <a href="{{ url_for('edit_student', student_id=student.student_id)}}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                        Edit
-                      </a>
-                    </td>
+                      <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-0 text-sm">
+                          {{ student.last_name }} {{ student.first_name }}
+                        </h6>
+                        <p class="text-xs text-secondary mb-0">
+                          {{ student.email }}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <p class="text-xs font-weight-bold mb-0">
+                      {{ student.class }}
+                    </p>
+                    <p class="text-xs text-secondary mb-0">
+                      {{ student.student_id }}
+                    </p>
+                  </td>
 
-                    <td class="align-middle">
-                      <a href="javascript:;" class="text-secondary font-weight-bold text-xs text-danger" data-toggle="tooltip" data-original-title="Edit user">
-                        Delete
-                      </a>
-                    </td>
-                  </tr>
-                  {% endfor %}
+                  <td class="align-middle">
+                    <a
+                      href="{{ url_for('edit_student', student_id=student.student_id)}}"
+                      class="text-secondary font-weight-bold text-xs"
+                      data-toggle="tooltip"
+                      data-original-title="Edit user"
+                    >
+                      Edit
+                    </a>
+                  </td>
 
-                </tbody>
-              </table>
-            </div>
+                  <td class="align-middle">
+                    <a
+                      href="javascript:;"
+                      class="text-secondary font-weight-bold text-xs text-danger"
+                      data-toggle="tooltip"
+                      data-original-title="Delete user"
+                      onclick="deleteStudent('{{ student.student_id }}')"
+                    >
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
+    </div>
 
-
-      <div class="row">
-        <a class="col-md-4 btn bg-gradient-primary mt-3 w-100" href="{{ url_for('addNewStudent')}}">
-            Add New Student
-        </a>
-      </div>
-      
- </div>
-{% endblock %}
+    <div class="row">
+      <a
+        class="col-md-4 btn bg-gradient-primary mt-3 w-100"
+        href="{{ url_for('addNewStudent')}}"
+      >
+        Add New Student
+      </a>
+    </div>
+  </div>
+  {% endblock %} {% block script %}
+  <script src="{{ url_for('static', filename='/js/delete_student.js') }}"></script>
+  {% endblock %}
+</div>
