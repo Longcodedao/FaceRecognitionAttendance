@@ -7,4 +7,4 @@ db = client['students_database']
 students_collection = db['students']
 
 
-students_collection.create_index([["student_id", ASCENDING]], unique = True)
+students_collection.create_index([("student_id", ASCENDING)], unique = True)
