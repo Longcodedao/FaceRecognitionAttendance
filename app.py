@@ -170,20 +170,21 @@ def on_disconnect():
 def receive_image(data):
     image_data = data['data']
     image_json = image_data.split(",")[1]
-    # setupPathImage(image_data, "Testing")
+
+
     # Process the received image data (decode base64)
     # convert string of image_data to uint8
     image_decode = base64.b64decode(image_json)
     nparr = np.frombuffer(image_decode, dtype = np.uint8)
-    print(nparr.shape)
+    # print(nparr.shape)
     # decode image
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    print(img.shape)
+    # print(img.shape)
     # Detect face
     face_detection = FaceDetection(img)
     
-    cv2.imread("image", face_detection)
+    # cv2.imread("image", face_detection)
     # Encode the process image as base64
     _, buffer = cv2.imencode('.jpg', face_detection)    
     processed_image_base64 = base64.b64encode(buffer).decode('utf-8')

@@ -10,11 +10,12 @@
 <video id="video" autoplay></video>
 <div>
     <h2>Processed Image</h2>
-    <video id="processImage" autoplay></video>
+    <img id="processImage"/>
 </div>
 
 <script>
     const video = document.getElementById('video');
+    const processedImage = document.getElementById('processedImage')
 
     async function startStream() {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -32,31 +33,13 @@
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 const imageData = canvas.toDataURL('image/jpeg');
                 socket.emit('image_data', { data: imageData });
-            }, 200); // Adjust the interval as needed
+            }, 100); // Adjust the interval as needed
         });
 
-
-        // socket.on('processed_image', function(data) {
-        //     var imageBase64 = data.image_predict;
-        //     var imageBlob = new Blob([imageBase64], { type: 'image/jpeg' });
-
-        //     if (video.srcObject === null) {
-        //         var mediaSource = new MediaSource();
-        //         video.src = URL.createObjectURL(mediaSource);
-
-        //         mediaSource.addEventListener('sourceopen', function() {
-        //             var sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-        //             sourceBuffer.mode = 'sequence';
-        //             sourceBuffer.appendBuffer(imageBlob);
-        //         });
-        //     } else {
-        //         var sourceBuffer = mediaSource.sourceBuffers[0];
-        //         sourceBuffer.appendBuffer(imageBlob);
-        //     }
-        // });
         socket.on('processed_image', function(data) {
             var imageBase64 = data.image_predict;
             processedImage.src = 'data:image/jpeg;base64,' + imageBase64;
+            console.log(processedImage)
         });
     }
 
