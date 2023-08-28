@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_from_directory, flash
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 from module.FaceModule import FaceDetection
 import os
 import numpy as np
@@ -12,12 +12,12 @@ from utils import setupPathImage
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+# @app.route('/')
+# def index():
+#     return render_template('index.html')
 
 # Combined with FrontEnd Version
-@app.route('/indexNew')
+@app.route('/')
 def indexNew():
     return render_template('index_another.html')
 
@@ -58,15 +58,10 @@ def addnewStudent():
     except Exception as e:
         return jsonify({"message": str(e)}), 500 
 
-
-
 @app.route('/data/images/<path:image_filename>')
 def serve_data_image(image_filename):
     image_folder = os.path.join(app.root_path)
     return send_from_directory(image_folder, image_filename)
-
-
-
 
 
 @app.route('/editStudent/<student_id>')
@@ -85,7 +80,6 @@ def edit_student_post(student_id):
         # print(path.split(","))
 
         if (len(data['image'].split(",")) >= 2):
-            print("F")
             path = setupPathImage(data['image'], data['first_name'])
 
         # print(path)
@@ -105,6 +99,10 @@ def edit_student_post(student_id):
 
     except Exception as e:
         return jsonify({"message": str(e)}), 500 
+
+@app.route('/attendance')
+def attendance():
+    return render_template('attendance_another.html')
 
 
 
@@ -159,10 +157,6 @@ def get_students():
         return jsonify({'message': 'method not allowed'}, 405)
 
 
-@app.route('/attendance')
-def attendance():
-    return render_template('attendance.html')
-
 @socketio.on('connect')
 def on_connect():
     print('Client connected')
@@ -171,19 +165,31 @@ def on_connect():
 def on_disconnect():
     print('Client disconnected')
 
+
 @socketio.on('image_data')
 def receive_image(data):
     image_data = data['data']
+    image_json = image_data.split(",")[1]
+    # setupPathImage(image_data, "Testing")
     # Process the received image data (decode base64)
     # convert string of image_data to uint8
-    nparr = np.fromstring(base64.b64decode(image_data), np.uint8)
+    image_decode = base64.b64decode(image_json)
+    nparr = np.frombuffer(image_decode, dtype = np.uint8)
+    print(nparr.shape)
     # decode image
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
+    print(img.shape)
     # Detect face
     face_detection = FaceDetection(img)
-
-    cv2.show('image', face_detection)
+    
+    cv2.imread("image", face_detection)
+    # Encode the process image as base64
+    _, buffer = cv2.imencode('.jpg', face_detection)    
+    processed_image_base64 = base64.b64encode(buffer).decode('utf-8')
+    
+    # emit return
+    emit('processed_image', {'image_predict': processed_image_base64})
 
 
 if __name__ == '__main__':

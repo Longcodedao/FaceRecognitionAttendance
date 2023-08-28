@@ -8,11 +8,13 @@ def FaceDetection(image):
     known_encodings = []
     known_names = []
     
+    # print(os.path.join(os.getcwd(), 'data', 'images'))
+    path = os.path.join(os.getcwd(), 'data', 'images')
     # Load images from the specified folders
     for folder in os.listdir(os.path.join(os.getcwd(), 'data', 'images')):
-        print(os.listdir(folder))
-        for file in os.listdir(folder):
-            image_path = os.path.join(folder, file)
+        folder_path = os.path.join(path, folder)
+        for file in os.listdir(folder_path):
+            image_path = os.path.join(folder_path, file)
             known_img = face_recognition.load_image_file(image_path)
             known_encoding = face_recognition.face_encodings(known_img)[0]
             known_encodings.append(known_encoding)
@@ -25,13 +27,13 @@ def FaceDetection(image):
     resized_img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5).astype(np.uint8)
     
     #Transfering BGR_image to RGB_image
-    RGB_resized_img = cv2.cvtColor(resized_img, cv2.COLOR_BGR2GRB)
+    # RGB_resized_img = cv2.cvtColor(resized_img, cv2.COLOR_BGR2GRB)
     
     #Find face location in img -> list
-    face_locations = face_recognition.face_locations(RGB_resized_img)
+    face_locations = face_recognition.face_locations(resized_img)
     
     #Encoding face -> list
-    face_encodings = face_recognition.face_encodings(RGB_resized_img, face_locations)
+    face_encodings = face_recognition.face_encodings(resized_img, face_locations)
     
     # Create a file name to save name of face -> list
     face_names = []
@@ -63,5 +65,4 @@ def FaceDetection(image):
             left = left * 2
             cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
             cv2.putText(img, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
-    
     return img

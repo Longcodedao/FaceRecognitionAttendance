@@ -4,7 +4,7 @@ import base64
 def setupPathImage(image, name):
     image_json = image.split(",")[1]
     decoded_image_data = base64.b64decode(image_json)
-    path_image = f"data/images/{name}/{name}.png"
+    path_image = f"data/images/{name}/{name}.jpeg"
 
     # Save the image
     if not os.path.exists(f"data/images/{name}"):

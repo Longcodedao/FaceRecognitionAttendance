@@ -1,0 +1,70 @@
+{% extends 'base_another.html' %}
+
+{% block head %}
+<title>Taking Attendance</title>
+{% endblock %}
+
+
+{% block body %}
+<h1>Webcam Streaming</h1>
+<video id="video" autoplay></video>
+<div>
+    <h2>Processed Image</h2>
+    <video id="processImage" autoplay></video>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+
+    async function startStream() {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+
+        const socket = io.connect('http://127.0.0.1:5000');
+
+        video.addEventListener('play', () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            setInterval(() => {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/jpeg');
+                socket.emit('image_data', { data: imageData });
+            }, 200); // Adjust the interval as needed
+        });
+
+
+        // socket.on('processed_image', function(data) {
+        //     var imageBase64 = data.image_predict;
+        //     var imageBlob = new Blob([imageBase64], { type: 'image/jpeg' });
+
+        //     if (video.srcObject === null) {
+        //         var mediaSource = new MediaSource();
+        //         video.src = URL.createObjectURL(mediaSource);
+
+        //         mediaSource.addEventListener('sourceopen', function() {
+        //             var sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+        //             sourceBuffer.mode = 'sequence';
+        //             sourceBuffer.appendBuffer(imageBlob);
+        //         });
+        //     } else {
+        //         var sourceBuffer = mediaSource.sourceBuffers[0];
+        //         sourceBuffer.appendBuffer(imageBlob);
+        //     }
+        // });
+        socket.on('processed_image', function(data) {
+            var imageBase64 = data.image_predict;
+            processedImage.src = 'data:image/jpeg;base64,' + imageBase64;
+        });
+    }
+
+    startStream();
+</script>
+{% endblock %}
+
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+{% endblock %}

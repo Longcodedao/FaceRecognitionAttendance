@@ -27,7 +27,7 @@ function captureImage() {
   canvas
     .getContext('2d')
     .drawImage(webcamElement, 0, 0, canvas.width, canvas.height);
-  imageURL = canvas.toDataURL('image/png'); // You can also use 'image/png'
+  imageURL = canvas.toDataURL('image/jpeg'); // You can also use 'image/png'
   downloadLocation.value = imageURL;
   closeImageOverlay();
 }
