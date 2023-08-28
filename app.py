@@ -70,19 +70,6 @@ def edit_student(student_id):
     return render_template("edit_student.html", student = student)
 
 
-@app.route('/deleteStudent/<student_id>', methods=['DELETE'])
-def delete_student(student_id):
-    try:
-        result = useDB.students_collection.delete_one({"student_id": student_id})
-        if result.deleted_count > 0:
-            print("Student deleted")
-            return jsonify({'message': 'success'}, 200)
-        else:
-            return jsonify({'message': 'Student not found'}, 404)
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
-
-
 @app.route('/editStudent/<student_id>', methods = ['POST'])
 def edit_student_post(student_id):
     print("Hello World")
