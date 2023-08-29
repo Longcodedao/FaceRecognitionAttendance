@@ -1,5 +1,6 @@
 import os
 import base64
+from datetime import datetime, time
 
 def setupPathImage(image, name):
     image_json = image.split(",")[1]
@@ -20,3 +21,24 @@ def setupPathImage(image, name):
         image_file.write(decoded_image_data)
 
     return path_image
+
+
+def check_datetime(time_input, time_output):
+    
+    hour_input = time_input.hour
+    minute_input = time_input.minute
+    second_input = time_input.second
+    
+    hour_output = time_output.hour
+    minute_output = time_output.minute
+    second_output = time_output.second
+    
+    # Compare the extracted components
+    if hour_input > hour_output:
+        return True
+    elif hour_input == hour_output and minute_input > minute_output:
+        return True
+    elif hour_input == hour_output and minute_input == minute_output and second_input >= second_output:
+        return True
+    else:
+        return False

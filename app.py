@@ -6,12 +6,13 @@ import numpy as np
 import cv2
 import useDB
 import base64
-from utils import setupPathImage
+from utils import setupPathImage, check_datetime
 from datetime import datetime
-
+import shutil
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+image_path = "data/images"
 
 # @app.route('/')
 # def index():
@@ -74,6 +75,11 @@ def edit_student(student_id):
 @app.route('/deleteStudent/<student_id>', methods=['DELETE'])
 def delete_student(student_id):
     try:
+        student = useDB.students_collection.find_one({"student_id": student_id})
+        student_name = student['first_name']
+        shutil.rmtree(os.path.join(image_path, student_name))
+        print("Successfully remove the image")
+
         result = useDB.students_collection.delete_one({"student_id": student_id})
         if result.deleted_count > 0:
             print("Student deleted")
@@ -125,8 +131,28 @@ def process_frame():
         data = request.json
         name = data['name']
         classroom_name = data['classroom']
+        
+        if not classroom_name:
+            return jsonify({'error': 'Class name is not provided'}), 400
 
-        response_data = {'status': 'success', 'message': f'Attendance recorded [Name: {name}, Classroom: {classroom_name}]'}        
+        found_class = useDB.classroom_db.find_one({'class_code': classroom_name})
+        if not found_class:
+            return jsonify({'error': 'Class not found'})
+
+        time = datetime.now()
+        print(type(time))
+        print(type(found_class['start_time']))
+        late = check_datetime(time, found_class['start_time'])
+
+        attendance_data = {
+            "name": name,
+            "classroom_name": classroom_name,
+            "time": time,
+            "late": late
+        }
+        useDB.students_attendance.insert_one(attendance_data)
+        response_data = {'status': 'success', 
+                         'message': f'Attendance recorded [Name: {name}, Classroom: {classroom_name}]'}        
       
         return jsonify(response_data), 200
     except Exception as e:
@@ -183,6 +209,7 @@ def get_students():
         return jsonify({'message': 'success'}, 200)
     else:
         return jsonify({'message': 'method not allowed'}, 405)
+
 
 
 @socketio.on('connect')

@@ -42,8 +42,11 @@ class FaceRecognitionApp:
         self.capture_button = tk.Button(root, text="Capture", command=self.capture_frame)
         self.capture_button.grid(row = 2)
 
+        self.reset_button = tk.Button(root, text="Reset", command=self.reset)
+        self.reset_button.grid(row = 3)
+
         self.quit_button = tk.Button(root, text="Quit", command=self.quit)
-        self.quit_button.grid(row = 3)
+        self.quit_button.grid(row = 4)
 
         self.loop = asyncio.get_event_loop()
 
@@ -80,8 +83,11 @@ class FaceRecognitionApp:
                     matches = face_recognition.compare_faces(self.known_encodings, face_encoding)
                     face_distances = face_recognition.face_distance(self.known_encodings, face_encoding)
                     best_match_index = np.argmin(face_distances)
-                    if matches[best_match_index] and face_distances[best_match_index] <= 0.5:
+
+                    if matches[best_match_index] and face_distances[best_match_index] <= 0.45:
                         self.recognize_names = self.known_names[best_match_index]
+                    else:
+                        self.recognize_names = "Unknown"
                     face_names.append(self.recognize_names)
 
             self.process_this_frame = not self.process_this_frame
@@ -110,12 +116,15 @@ class FaceRecognitionApp:
 
     def capture_frame(self):
         ret, frame = self.cap.read()
-        if ret:
+        if  ret and self.recognize_names != "Unknown":
             self.capture = frame
             # asyncio.run(self.send_name_to_server(self.recognize_names, self.class_entry.get()))
             asyncio.run(self.send_name_to_server(self.recognize_names, self.class_entry.get()))
+        
         self.recognize_names = "Unknown"
 
+    def reset(self):
+        self.recognize_names = "Unknown"
 
     async def send_name_to_server(self, name, classroom):
         try:
