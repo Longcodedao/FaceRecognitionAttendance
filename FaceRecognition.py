@@ -10,6 +10,14 @@ import os
 import asyncio
 import aiohttp
 
+
+#ai speaker import
+import uuid
+import time
+from playsound import playsound
+from gtts import gTTS
+
+
 class FaceRecognitionApp:
     def __init__(self, root):
         self.root = root
@@ -24,7 +32,11 @@ class FaceRecognitionApp:
 
         self.load_known_faces()
 
-        self.cap = cv2.VideoCapture(1)
+        # self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(3, 640)  # Set width to 640
+        self.cap.set(4, 480)  # Set height to 480
+
         self.process_this_frame = True
 
         self.label = tk.Label(root)
@@ -53,10 +65,11 @@ class FaceRecognitionApp:
         self.update()
 
     def load_known_faces(self):
-        os.chdir('data/images')
-        for folder in os.listdir():
-            for file in os.listdir(folder):
-                image_path = os.path.join(folder, file)
+        # os.chdir('data/images')'
+        data_path = './data/images'
+        for folder in os.listdir(data_path):
+            for file in os.listdir(os.path.join(data_path, folder)):
+                image_path = os.path.join(data_path, folder, file)
                 known_img = face_recognition.load_image_file(image_path)
                 known_encoding = face_recognition.face_encodings(known_img)[0]
                 self.known_encodings.append(known_encoding)
@@ -84,6 +97,7 @@ class FaceRecognitionApp:
                     face_distances = face_recognition.face_distance(self.known_encodings, face_encoding)
                     best_match_index = np.argmin(face_distances)
 
+                    print(face_distances)
                     if matches[best_match_index] and face_distances[best_match_index] <= 0.45:
                         self.recognize_names = self.known_names[best_match_index]
                     else:
@@ -126,6 +140,20 @@ class FaceRecognitionApp:
     def reset(self):
         self.recognize_names = "Unknown"
 
+    def play_text_to_speech_welcome(self, text):
+        tts = gTTS(text)
+        tts.save("./samplesound/welcome.mp3")  # Save the generated speech as an audio file
+        playsound("./samplesound/welcome.mp3")  # Play the audio file
+        os.remove("./samplesound/welcome.mp3")
+
+    def play_text_to_speech_unknown(self, text):
+        tts = gTTS(text)
+        tts.save("./samplesound/unknown_person.mp3")
+        playsound("./samplesound/unknown_person.mp3")
+        os.remove("./samplesound/unknown_person.mp3")
+
+
+        
     async def send_name_to_server(self, name, classroom):
         try:
             async with aiohttp.ClientSession() as session:
@@ -133,8 +161,12 @@ class FaceRecognitionApp:
                                         json = {"name": name, "classroom": classroom}) as response:
                     if response.status == 200:
                         result = await response.json()
+                        welcome_text = f"Welcome to {self.class_entry.get()}. Hello {self.recognize_names}"
+                        self.play_text_to_speech_welcome(welcome_text)
                         messagebox.showinfo("Success", "Attendance Checked")
                     else:
+                        unknown_text=f"Who are you? Please recapture your picture"
+                        self.play_text_to_speech_unknown(unknown_text)
                         messagebox.showerror("Error", "Failed")
 
         except Exception as e:
