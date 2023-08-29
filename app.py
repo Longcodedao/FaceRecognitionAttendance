@@ -7,6 +7,7 @@ import cv2
 import useDB
 import base64
 from utils import setupPathImage
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -117,6 +118,20 @@ def edit_student_post(student_id):
 def attendance():
     return render_template('attendance_another.html')
 
+
+@app.route('/recognized_person', methods=['POST'])
+def process_frame():
+    try:
+        data = request.json
+        name = data['name']
+        classroom_name = data['classroom']
+
+        response_data = {'status': 'success', 'message': f'Attendance recorded [Name: {name}, Classroom: {classroom_name}]'}        
+      
+        return jsonify(response_data), 200
+    except Exception as e:
+        print("Error: ", str(e))
+        return jsonify({'message': 'Error processing frame'}), 500
 
 
 
