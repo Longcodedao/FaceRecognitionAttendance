@@ -1,0 +1,25 @@
+.submit-button{
+    background-color: white;
+    border-radius: 0px 10px 10px 0px;
+    border: 1px solid #d2d6da;
+    border-left: none;
+    padding: 0px 10px;
+    background-color: #cb0c9f;
+} 
+
+
+.submit-button i {
+    font-size: 12px;
+}
+
+.input-group input {
+    border-radius: 0px !important;
+}
+
+#searchForm {
+    margin-right: 10px;
+}
+
+#loadingScreen {
+    height: 80vh;
+}

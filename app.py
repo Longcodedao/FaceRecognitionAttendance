@@ -9,6 +9,7 @@ import base64
 from utils import setupPathImage, check_datetime
 from datetime import datetime
 import shutil
+from bson import ObjectId
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -164,52 +165,67 @@ def process_frame():
 
 ########################################################
 
-@app.route('/capture_img')
-def capture_img():
-    return render_template('capture_img.html')
+# @app.route('/capture_img')
+# def capture_img():
+#     return render_template('capture_img.html')
 
-@app.route('/upload_capture_img', methods=['POST'])
-def upload_capture_img():
-    method = request.method
-    if method == 'POST':
-        # JSON to JPG
-        name = request.json['name']
-        # strim name
-        name = name.strip()
-        img_json = request.json['image'].split(",")[1]
-        decoded_image_data = base64.b64decode(img_json)
-        # Save the image
-        if not os.path.exists(f"data/{name}"):
-            os.makedirs(f"data/images/{name}")
-        open(f"data/images/{name}/{name}.png", "wb").write(decoded_image_data)
+# @app.route('/upload_capture_img', methods=['POST'])
+# def upload_capture_img():
+#     method = request.method
+#     if method == 'POST':
+#         # JSON to JPG
+#         name = request.json['name']
+#         # strim name
+#         name = name.strip()
+#         img_json = request.json['image'].split(",")[1]
+#         decoded_image_data = base64.b64decode(img_json)
+#         # Save the image
+#         if not os.path.exists(f"data/{name}"):
+#             os.makedirs(f"data/images/{name}")
+#         open(f"data/images/{name}/{name}.png", "wb").write(decoded_image_data)
 
-        return jsonify({'message': 'success'}, 200)
-    else:
-        return jsonify({'message': 'method not allowed'}, 405)
+#         return jsonify({'message': 'success'}, 200)
+#     else:
+#         return jsonify({'message': 'method not allowed'}, 405)
 
 
-@app.route('/api/studens', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def get_students():
-    # get method
-    method = request.method
-    if method == 'GET':
-        data_students = [] # get from db
-        return jsonify(data_students, 200)
-    elif method == 'POST':
-        data_students = request.json['data_students']
-        # insert to db
-        return jsonify({'message': 'success'}, 200)
-    elif method == 'PUT':
-        data_students = request.json['data_students']
-        # update to db
-        return jsonify({'message': 'success'}, 200)
-    elif method == 'DELETE':
-        data_students = request.json['data_students']
-        # delete from db
-        return jsonify({'message': 'success'}, 200)
-    else:
-        return jsonify({'message': 'method not allowed'}, 405)
+# @app.route('/api/studens', methods=['GET', 'POST', 'PUT', 'DELETE'])
+# def get_students():
+#     # get method
+#     method = request.method
+#     if method == 'GET':
+#         data_students = [] # get from db
+#         return jsonify(data_students, 200)
+#     elif method == 'POST':
+#         data_students = request.json['data_students']
+#         # insert to db
+#         return jsonify({'message': 'success'}, 200)
+#     elif method == 'PUT':
+#         data_students = request.json['data_students']
+#         # update to db
+#         return jsonify({'message': 'success'}, 200)
+#     elif method == 'DELETE':
+#         data_students = request.json['data_students']
+#         # delete from db
+#         return jsonify({'message': 'success'}, 200)
+#     else:
+#         return jsonify({'message': 'method not allowed'}, 405)
 
+
+@app.route('/search')
+def search_student():
+    query = request.args.get('query')
+    res = useDB.classroom_db.find_one({'class_code': query})
+    if not res:
+        return jsonify({"message": "Cannot find the Class"}), 404
+    
+    print(res['class_name'])
+
+    attendance_list = list(useDB.students_attendance.find({'classroom_name': query}))
+    for attendance_record in attendance_list:
+        attendance_record['_id'] = str(attendance_record['_id'])
+
+    return jsonify({"classname" : res['class_name'], "attendance" : attendance_list}), 200
 
 
 @socketio.on('connect')

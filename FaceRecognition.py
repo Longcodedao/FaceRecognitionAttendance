@@ -33,7 +33,7 @@ class FaceRecognitionApp:
         self.load_known_faces()
 
         # self.cap = cv2.VideoCapture(1)
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         self.cap.set(3, 640)  # Set width to 640
         self.cap.set(4, 480)  # Set height to 480
 
@@ -63,6 +63,7 @@ class FaceRecognitionApp:
         self.loop = asyncio.get_event_loop()
 
         self.update()
+
 
     def load_known_faces(self):
         # os.chdir('data/images')'
@@ -98,7 +99,7 @@ class FaceRecognitionApp:
                     best_match_index = np.argmin(face_distances)
 
                     print(face_distances)
-                    if matches[best_match_index] and face_distances[best_match_index] <= 0.45:
+                    if matches[best_match_index] and face_distances[best_match_index] <= 0.475:
                         self.recognize_names = self.known_names[best_match_index]
                     else:
                         self.recognize_names = "Unknown"
@@ -142,15 +143,16 @@ class FaceRecognitionApp:
 
     def play_text_to_speech_welcome(self, text):
         tts = gTTS(text)
-        tts.save("./samplesound/welcome.mp3")  # Save the generated speech as an audio file
-        playsound("./samplesound/welcome.mp3")  # Play the audio file
-        os.remove("./samplesound/welcome.mp3")
+        abs_path = os.path.normpath("./samplesound/welcome.mp3")
+        tts.save(abs_path)  # Save the generated speech as an audio file
+        playsound(abs_path)  # Play the audio file
+        os.remove(abs_path)
 
     def play_text_to_speech_unknown(self, text):
         tts = gTTS(text)
-        tts.save("./samplesound/unknown_person.mp3")
-        playsound("./samplesound/unknown_person.mp3")
-        os.remove("./samplesound/unknown_person.mp3")
+        tts.save(os.path.normpath("../samplesound/unknown_person.mp3"))
+        playsound(os.path.normpath("../samplesound/unknown_person.mp3"))
+        os.remove(os.path.normpath("../samplesound/unknown_person.mp3"))
 
 
         

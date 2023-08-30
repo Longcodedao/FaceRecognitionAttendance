@@ -8,6 +8,20 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/add_student.css') }}">
 {% endblock %}
 
+{% block search %}
+<div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4 d-flex justify-content-end gap-3" id="navbar">
+    <div class="pe-md-3 d-flex align-items-center">
+        
+            <div class="input-group" style="width: 25vw;">
+                <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                <input type="text" class="px-2 form-control" placeholder="Type here...">
+            </div>
+    
+      
+  </div>
+</div>
+{% endblock %}
+
 
 {% block body %}
 <div class="container-fluid py-4">

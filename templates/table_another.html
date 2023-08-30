@@ -1,12 +1,24 @@
 {% extends 'base_another.html' %} {% block head %}
 <title>Table</title>
+
+{% block search %}
+<div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4 d-flex justify-content-end gap-3" id="navbar">
+    <div class="pe-md-3 d-flex align-items-center">
+      <div class="input-group" style="width: 25vw;">
+        <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+        <input type="text" class="px-2 form-control" placeholder="Type here...">
+      </div>
+  </div>
+{% endblock %}
+
+
 {% endblock %} {% block body %}
 <div class="container-fluid py-4">
   <div class="row">
     <div class="col-12">
       <div class="card mb-4">
         <div class="card-header pb-0">
-          <h6>Students table</h6>
+          <h6 id="table-name">Students table</h6>
         </div>
         <div class="card-body px-0 pt-0 pb-2">
           <div class="table-responsive p-0">
@@ -26,7 +38,7 @@
                   <th class="text-secondary opacity-7"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="attendance-std">
                 {% for student in student_data %}
                 <tr>
                   <td>
@@ -76,8 +88,7 @@
                       data-original-title="Delete user"
                       onclick="deleteStudent('{{ student.student_id }}')"
                     >
-                      Delete
-                    </a>
+                      Delete 
                   </td>
                 </tr>
                 {% endfor %}
@@ -97,6 +108,7 @@
       </a>
     </div>
   </div>
+</div>
   {% endblock %} {% block script %}
   <script src="{{ url_for('static', filename='/js/delete_student.js') }}"></script>
   {% endblock %}
