@@ -32,8 +32,7 @@ class FaceRecognitionApp:
 
         self.load_known_faces()
 
-        # self.cap = cv2.VideoCapture(1)
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(0)
         self.cap.set(3, 640)  # Set width to 640
         self.cap.set(4, 480)  # Set height to 480
 
@@ -54,8 +53,8 @@ class FaceRecognitionApp:
         self.capture_button = tk.Button(root, text="Capture", command=self.capture_frame)
         self.capture_button.grid(row = 2)
 
-        self.reset_button = tk.Button(root, text="Reset", command=self.reset)
-        self.reset_button.grid(row = 3)
+        # self.reset_button = tk.Button(root, text="Reset", command=self.reset)
+        # self.reset_button.grid(row = 3)
 
         self.quit_button = tk.Button(root, text="Quit", command=self.quit)
         self.quit_button.grid(row = 4)
@@ -138,8 +137,8 @@ class FaceRecognitionApp:
         
         self.recognize_names = "Unknown"
 
-    def reset(self):
-        self.recognize_names = "Unknown"
+    # def reset(self):
+    #     self.recognize_names = "Unknown"
 
     def play_text_to_speech_welcome(self, text):
         tts = gTTS(text)
